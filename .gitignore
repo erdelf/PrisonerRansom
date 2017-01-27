@@ -7,7 +7,10 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
-
+Assemblies/AlienRace.dll.config
+Source/PrisonerRansom/.vs
+Source/PrisonerRansom/bin
+Source/PrisonerRansom/obj
 # Windows Installer files
 *.cab
 *.msi
