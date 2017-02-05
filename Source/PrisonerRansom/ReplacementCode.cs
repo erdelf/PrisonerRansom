@@ -8,14 +8,60 @@ using Verse;
 using HugsLib.GuiInject;
 using HugsLib.Source.Detour;
 using UnityEngine;
+using HugsLib;
+using HugsLib.Settings;
 
 namespace PrisonerRansom
 {
-    internal static class ReplacementCode
+
+    [StaticConstructorOnStartup]
+    public static class ReplacementCode
     {
-        
-        [DetourMethod(typeof(FactionDialogMaker), "FactionDialogFor")]
-        internal static DiaNode _FactionDialogFor(Pawn negotiator, Faction faction)
+        static ReplacementCode()
+        {
+            // Thank god Zhentar
+            LongEventHandler.QueueLongEvent(() =>
+            {
+                Detour.TryDetourFromTo(typeof(FactionDialogMaker).GetMethod("FactionDialogFor"), typeof(ReplacementCode).GetMethod("_FactionDialogFor"));
+
+                ransomFactor = () => 2f;
+                ransomGoodwill = () => 5f;
+                ransomGoodwillFail = () => -10f;
+                ransomFailChance = () => 20f;
+
+                try
+                {   //Need a wrapper method/lambda to be able to catch the TypeLoadException when HugsLib isn't present
+                    ((Action)(() =>
+                    {
+
+                        ModSettingsPack settings = HugsLibController.Instance.Settings.GetModSettings("PrisonerRansom");
+                        //handle can't be saved as a SettingHandle<> type; otherwise the compiler generated closure class will throw a typeloadexception
+
+                        settings.EntryName = "PrisonerRansom";
+
+                        object factor = settings.GetHandle<float>("ransomFactor", "Ransom amount factor", "Determines the factor that the value of a prisoner is multiplied with", 2f);
+                        object goodwill = settings.GetHandle<float>("ransomGoodwill", "Goodwill effect on success", "Determines the value the relationship get's affected with on success", 5f);
+                        object goodwillFail = settings.GetHandle<float>("ransomGoodwillFail", "Goodwill effect on failure", "Determines the value the relationship get's affected with on failure", -10f);
+                        object failChance = settings.GetHandle<float>("ransomFailureChance", "Chance of failure", "Determines the probability of a ransom failing", 20f);
+
+                        ransomFactor = () => (SettingHandle<float>)factor;
+                        ransomGoodwill = () => (SettingHandle<float>)goodwill;
+                        ransomGoodwillFail = () => (SettingHandle<float>)goodwillFail;
+                        ransomFailChance = () => (SettingHandle<float>)failChance;
+                        return;
+                    }))();
+                } 
+                catch (TypeLoadException)
+                { }
+            }, "queueHugsLibPrisonerRansom", false, null);
+        }
+
+        public static Func<float> ransomFactor;
+        public static Func<float> ransomGoodwill;
+        public static Func<float> ransomGoodwillFail;
+        public static Func<float> ransomFailChance;
+
+        public static DiaNode _FactionDialogFor(Pawn negotiator, Faction faction)
         {
             Map map = negotiator.Map;
             SetStaticField(typeof(FactionDialogMaker), "negotiator", negotiator);
@@ -127,11 +173,11 @@ namespace PrisonerRansom
             DiaNode diaNode = new DiaNode("You have these Prisoners of this faction");
             foreach (Pawn p in prisoners)
             {
-                int value = UnityEngine.Mathf.RoundToInt(p.MarketValue * (faction.leader==p?4:RansomSettings.ransomFactor.Value));
+                int value = UnityEngine.Mathf.RoundToInt(p.MarketValue * (faction.leader==p?4:ransomFactor()));
                 DiaOption diaOption = new DiaOption(p.Name.ToStringFull + " (" + value + ")");
                 diaOption.action = delegate
                 {
-                    if (UnityEngine.Random.value + negotiator.skills.GetSkill(SkillDefOf.Social).Level/50 - 0.2  > (RansomSettings.ransomFailChance.Value/100f))
+                    if (UnityEngine.Random.value + negotiator.skills.GetSkill(SkillDefOf.Social).Level/50 - 0.2  > (ransomFailChance()/100f))
                     {
                         Messages.Message("The faction delivered the ransom.", MessageSound.Benefit);
                         Thing silver = ThingMaker.MakeThing(ThingDefOf.Silver);
@@ -144,13 +190,13 @@ namespace PrisonerRansom
                             p.DeSpawn();
                         }
                         //TaleRecorder.RecordTale(TaleDefOf.SoldPrisoner);
-                        faction.AffectGoodwillWith(Faction.OfPlayer, faction.leader == p ? 50 : RansomSettings.ransomGoodwill.Value);
-                        Messages.Message("You send " + (faction.leader == p ? "the leader of this Faction" : "You send your prisoner") + " back to his home (+" + (faction.leader == p ? 50 : RansomSettings.ransomGoodwill.Value) + ")", MessageSound.Standard);
+                        faction.AffectGoodwillWith(Faction.OfPlayer, faction.leader == p ? 50 : ransomGoodwill());
+                        Messages.Message("You send " + (faction.leader == p ? "the leader of this Faction" : "You send your prisoner") + " back to his home (+" + (faction.leader == p ? 50 : ransomGoodwill()) + ")", MessageSound.Standard);
                     }
                     else
                     {
                         Messages.Message("The faction did not accept the ransom.", MessageSound.Negative);
-                        faction.AffectGoodwillWith(Faction.OfPlayer, faction.leader == p ? -50 : RansomSettings.ransomGoodwillFail.Value);
+                        faction.AffectGoodwillWith(Faction.OfPlayer, faction.leader == p ? -50 : ransomGoodwillFail());
                         IncidentParms incidentParms = new IncidentParms();
                         incidentParms.faction = faction;
                         incidentParms.points = (float)Rand.Range(value/3, value/2);

@@ -69,8 +69,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RansomSettings.cs" />
     <Compile Include="ReplacementCode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
