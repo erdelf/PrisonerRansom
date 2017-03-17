@@ -24,7 +24,7 @@ namespace PrisonerRansom
                 ransomFailChance = () => 20f;
 
                 HarmonyInstance harmony = HarmonyInstance.Create("rimworld.erdelf.prisoner_ransom");
-                harmony.Patch(typeof(FactionDialogMaker).GetMethod("FactionDialogFor"), null, new HarmonyMethod(typeof(ReplacementCode).GetMethod("FactionDialogForPostFix")));
+                harmony.Patch(typeof(FactionDialogMaker).GetMethod("FactionDialogFor"), null, new HarmonyMethod(typeof(ReplacementCode), nameof(FactionDialogForPostFix)));
 
                 try
                 {   //Need a wrapper method/lambda to be able to catch the TypeLoadException when HugsLib isn't present
