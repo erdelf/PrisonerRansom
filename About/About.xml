@@ -2,9 +2,8 @@
 <ModMetaData>
   <name>PrisonerRansom</name>
   <author>erdelf</author>
-  <targetVersion>0.16.0</targetVersion>
+  <targetVersion>0.17.0</targetVersion>
   <description>
-(This mod includes some CCL code. Thanks to 1000101. As soon as CCL comes out, it will be required.)
   
 This mod allows you to demand ransom for inprisoned pawns for silver at the comms console.
 It will give you a slight relationship boost.
