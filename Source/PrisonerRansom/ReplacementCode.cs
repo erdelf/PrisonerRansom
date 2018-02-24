@@ -82,7 +82,7 @@ namespace PrisonerRansom
                     {
                         if (UnityEngine.Random.value + negotiator.skills.GetSkill(SkillDefOf.Social).Level / 50 - 0.2 > (settings.ransomFailChance / 100f))
                         {
-                            Messages.Message("The faction delivered the ransom.", MessageSound.Benefit);
+                            Messages.Message("The faction delivered the ransom.", MessageTypeDefOf.PositiveEvent);
                             Thing silver = ThingMaker.MakeThing(ThingDefOf.Silver);
                             silver.stackCount = value;
                             TradeUtility.SpawnDropPod(DropCellFinder.TradeDropSpot(map), map, silver);
@@ -94,11 +94,11 @@ namespace PrisonerRansom
                             }
                         //TaleRecorder.RecordTale(TaleDefOf.SoldPrisoner);
                         faction.AffectGoodwillWith(Faction.OfPlayer, faction.leader == p ? 50 : settings.ransomGoodwill);
-                            Messages.Message("You send " + (faction.leader == p ? "the leader of this Faction" : "You send your prisoner") + " back to his home (+" + (faction.leader == p ? 50 : settings.ransomGoodwill) + ")", MessageSound.Standard);
+                            Messages.Message("You send " + (faction.leader == p ? "the leader of this Faction" : "You send your prisoner") + " back to his home (+" + (faction.leader == p ? 50 : settings.ransomGoodwill) + ")", MessageTypeDefOf.NeutralEvent);
                         }
                         else
                         {
-                            Messages.Message("The faction did not accept the ransom.", MessageSound.Negative);
+                            Messages.Message("The faction did not accept the ransom.", MessageTypeDefOf.NegativeEvent);
                             faction.AffectGoodwillWith(Faction.OfPlayer, faction.leader == p ? -50 : settings.ransomGoodwillFail);
                             IncidentParms incidentParms = new IncidentParms()
                             {
