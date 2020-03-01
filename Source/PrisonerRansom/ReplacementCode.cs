@@ -65,11 +65,11 @@ namespace PrisonerRansom
         {
             if (faction.HostileTo(other: Faction.OfPlayer))
             {
-                __result.options.Insert(index: 0, item: RansomPrisoner(faction: faction, negotiator: negotiator, map: negotiator.Map));
+                __result.options.Insert(index: 0, item: RansomPrisoner(faction: faction, negotiator: negotiator, map: negotiator.Map, original: __result));
             }
         }
 
-        private static DiaOption RansomPrisoner(Faction faction, Pawn negotiator, Map map)
+        private static DiaOption RansomPrisoner(Faction faction, Pawn negotiator, Map map, DiaNode original)
         {
             IEnumerable<Pawn> prisoners = map.mapPawns.PrisonersOfColony.Where(predicate: p => p.Faction == faction).ToArray();
             DiaOption dia = new DiaOption(text: "Demand ransom for Prisoner");
@@ -95,8 +95,8 @@ namespace PrisonerRansom
                                 GenGuest.PrisonerRelease(p: p);
                                 p.DeSpawn();
                             }
-                        //TaleRecorder.RecordTale(TaleDefOf.SoldPrisoner);
-                        faction.TryAffectGoodwillWith(other: Faction.OfPlayer, goodwillChange: faction.leader == p ? 50 : settings.ransomGoodwill);
+                            //TaleRecorder.RecordTale(TaleDefOf.SoldPrisoner);
+                            faction.TryAffectGoodwillWith(other: Faction.OfPlayer, goodwillChange: faction.leader == p ? 50 : settings.ransomGoodwill);
                             Messages.Message(text: "You send " + (faction.leader == p ? "the leader of this Faction" : "You send your prisoner") + " back to his home (+" + (faction.leader == p ? 50 : settings.ransomGoodwill) + ")", def: MessageTypeDefOf.NeutralEvent);
                         }
                         else
@@ -117,6 +117,8 @@ namespace PrisonerRansom
                 diaNode.options.Add(item: diaOption);
                 diaOption.resolveTree = true;
             }
+
+            diaNode.options.Add(new DiaOption("Go back") { link = original});
             dia.link = diaNode;
             return dia;
         }
