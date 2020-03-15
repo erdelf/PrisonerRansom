@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 
 namespace PrisonerRansom
@@ -111,8 +111,8 @@ namespace PrisonerRansom
 
         static ReplacementCode()
         {
-            HarmonyInstance harmony = HarmonyInstance.Create(id: "rimworld.erdelf.prisoner_ransom");
-            harmony.Patch(original: typeof(FactionDialogMaker).GetMethod(name: "FactionDialogFor"), prefix: null, postfix: new HarmonyMethod(type: typeof(ReplacementCode), name: nameof(FactionDialogForPostFix)));
+            Harmony harmony = new Harmony(id: "rimworld.erdelf.prisoner_ransom");
+            harmony.Patch(original: typeof(FactionDialogMaker).GetMethod(name: "FactionDialogFor"), prefix: null, postfix: new HarmonyMethod(typeof(ReplacementCode), nameof(FactionDialogForPostFix)));
         }
         
         public static void FactionDialogForPostFix(ref DiaNode __result, Pawn negotiator, Faction faction)

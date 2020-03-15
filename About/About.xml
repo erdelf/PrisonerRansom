@@ -2,7 +2,11 @@
 <ModMetaData>
   <name>PrisonerRansom</name>
   <author>erdelf</author>
-  <supportedVersions><li>1.0</li></supportedVersions>
+  <packageId>erdelf.PrisonerRansom</packageId>
+  <supportedVersions>
+    <li>1.0</li>
+    <li>1.1</li>
+  </supportedVersions>
   <description>
   
 This mod allows you to demand ransom for inprisoned pawns for silver at the comms console.
