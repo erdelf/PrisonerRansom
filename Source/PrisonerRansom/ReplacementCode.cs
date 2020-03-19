@@ -26,8 +26,8 @@ namespace PrisonerRansom
             base.ExposeData();
             Scribe_Values.Look(value: ref this.ransomFactor, label: "ransomFactor", defaultValue: 2);
             Scribe_Values.Look(value: ref this.adjustment,   label: "adjustment",   defaultValue: 81);
-            Scribe_Values.Look(value: ref this.ransomRaidDelay,     label: "ransomGoodwill",     defaultValue: GenDate.TicksPerDay * 2);
-            Scribe_Values.Look(value: ref this.ransomFailCooldown, label: "ransomGoodWillFail", defaultValue: GenDate.TicksPerDay * 3);
+            Scribe_Values.Look(value: ref this.ransomRaidDelay,     label: "ransomRaidDelay",     defaultValue: GenDate.TicksPerDay * 2);
+            Scribe_Values.Look(value: ref this.ransomFailCooldown, label: "ransomRaidFailCooldown", defaultValue: GenDate.TicksPerDay * 3);
         }
 
         public static float MarketValue(Pawn p) => p.MarketValue * settings.ransomFactor;
@@ -61,10 +61,10 @@ namespace PrisonerRansom
 
             Rect sliderSection = inRect.TopPart(0.7f);
 
-            this.settings.ransomFactor = (int) Widgets.HorizontalSlider(rect: sliderSection.TopHalf().TopHalf(), value: this.settings.ransomFactor, leftValue: 1f, rightValue: 5f, middleAlignment: true, label: $"Ransom amount factor: {this.settings.ransomFactor}\nDetermines the factor that the value of a prisoner is multiplied with", leftAlignedLabel: "1", rightAlignedLabel: "5");
-            ransomRaidDelay = (int) Widgets.HorizontalSlider(rect: sliderSection.TopHalf().BottomHalf().TopHalf(), value: ransomRaidDelay, leftValue: 1f, rightValue: 168f, middleAlignment: true, label: $"Delay before a raid will appear on fail: {this.settings.ransomRaidDelay.ToStringTicksToPeriod()}", leftAlignedLabel: "1", rightAlignedLabel: "168");
-            ransomFailCooldown = (int) Widgets.HorizontalSlider(rect: sliderSection.BottomHalf().TopHalf().TopHalf(),value: ransomFailCooldown, leftValue: ransomRaidDelay, rightValue: 336f, middleAlignment: true, label: $"Cooldown after failure: {this.settings.ransomFailCooldown.ToStringTicksToPeriod()}", leftAlignedLabel: ransomRaidDelay.ToString(), rightAlignedLabel: "336");
-            this.settings.adjustment = (int) Widgets.HorizontalSlider(rect: sliderSection.BottomHalf().BottomHalf().TopHalf(), value: this.settings.adjustment, leftValue: 40f, rightValue: 95f, middleAlignment: true, label: $"Adjustment for chance calculation: {this.settings.adjustment}\nDetermines the probability of a ransom failing", leftAlignedLabel: "40", rightAlignedLabel: "95");
+            this.settings.ransomFactor = (int) Widgets.HorizontalSlider(rect: sliderSection.TopHalf().TopHalf().BottomHalf(), value: this.settings.ransomFactor, leftValue: 1f, rightValue: 5f, middleAlignment: true, label: "SettingsRansomFactor".Translate(this.settings.ransomFactor), leftAlignedLabel: "1", rightAlignedLabel: "5");
+            ransomRaidDelay = (int) Widgets.HorizontalSlider(rect: sliderSection.TopHalf().BottomHalf().TopHalf(), value: ransomRaidDelay, leftValue: 1f, rightValue: 168f, middleAlignment: true, label: "SettingsRansomRaidDelay".Translate(this.settings.ransomRaidDelay.ToStringTicksToPeriod()), leftAlignedLabel: "1", rightAlignedLabel: "168");
+            ransomFailCooldown = (int) Widgets.HorizontalSlider(rect: sliderSection.BottomHalf().TopHalf().TopHalf(),value: ransomFailCooldown, leftValue: ransomRaidDelay, rightValue: 336f, middleAlignment: true, label: "SettingsRansomFailCooldown".Translate(this.settings.ransomFailCooldown.ToStringTicksToPeriod()), leftAlignedLabel: ransomRaidDelay.ToString(), rightAlignedLabel: "336");
+            this.settings.adjustment = (int) Widgets.HorizontalSlider(rect: sliderSection.BottomHalf().BottomHalf().TopHalf(), value: this.settings.adjustment, leftValue: 40f, rightValue: 95f, middleAlignment: true, label: "SettingsRansomAdjustment".Translate(this.settings.adjustment), leftAlignedLabel: "40", rightAlignedLabel: "95");
 
             this.settings.ransomRaidDelay = ransomRaidDelay * GenDate.TicksPerHour;
             this.settings.ransomFailCooldown = ransomFailCooldown * GenDate.TicksPerHour;
@@ -126,10 +126,10 @@ namespace PrisonerRansom
         private static DiaOption RansomPrisoner(Faction faction, Pawn negotiator, Map map, DiaNode original)
         {
             IEnumerable<Pawn> prisoners = map.mapPawns.PrisonersOfColony.Where(predicate: p => p.Faction == faction).ToArray();
-            DiaOption dia = new DiaOption(text: "Demand ransom for Prisoner");
+            DiaOption dia = new DiaOption(text: "DialogRansomDemand".Translate());
             if (!prisoners.Any())
-                dia.Disable(newDisabledReason: "No prisoners of this faction.");
-            DiaNode diaNode = new DiaNode(text: "You have these Prisoners of this faction");
+                dia.Disable(newDisabledReason: "DialogRansomNoPrisoners".Translate());
+            DiaNode diaNode = new DiaNode(text: "DialogRansomPrisonerList".Translate());
             foreach (Pawn p in prisoners)
             {
                 int value = Mathf.RoundToInt(f: RansomSettings.MarketValue(p));
@@ -179,22 +179,22 @@ namespace PrisonerRansom
         {
             Listing_Standard listingStandard = new Listing_Standard();
             listingStandard.Begin(inRect);
-            listingStandard.Label($"Bargaining for {this.prisoner.Name.ToStringFull} with {this.prisoner.Faction.Name}");
+            listingStandard.Label("RansomBargain".Translate(this.prisoner.Name.ToStringFull, this.prisoner.Faction.Name));
             listingStandard.Gap();
             listingStandard.Gap();
             listingStandard.Gap();
 
-            listingStandard.Label(label: $"Demand {RansomSettings.MarketValuePercentage(this.prisoner, this.percentage).ToString(CultureInfo.CurrentCulture)} Silver");
+            listingStandard.Label(label: $"RansomDemandAmount".Translate(RansomSettings.MarketValuePercentage(this.prisoner, this.percentage).ToString(CultureInfo.CurrentCulture), ThingDefOf.Silver.LabelCap));
             
             this.percentage = listingStandard.Slider(this.percentage, -50f, 50f);
             listingStandard.Gap();
-            listingStandard.Label(label: $"A chance of {Mathf.RoundToInt(RansomSettings.RansomChance(this.prisoner, this.handler, this.percentage) * 100).ToString(CultureInfo.CurrentCulture)}% to make a successful demand");
-            if (listingStandard.ButtonText("Send Offer"))
+            listingStandard.Label(label: $"RansomDemandChance".Translate(Mathf.RoundToInt(RansomSettings.RansomChance(this.prisoner, this.handler, this.percentage) * 100).ToString(CultureInfo.CurrentCulture)));
+            if (listingStandard.ButtonText("RansomSendOffer".Translate()))
             {
                 Faction faction = this.prisoner.Faction;
                 if (Rand.Value < RansomSettings.RansomChance(this.prisoner, this.handler, this.percentage))
                 {
-                    Messages.Message(text: "The faction delivered the ransom.", def: MessageTypeDefOf.PositiveEvent);
+                    Messages.Message(text: "RansomFactionDeliveredMessage".Translate(), def: MessageTypeDefOf.PositiveEvent);
                     Thing silver = ThingMaker.MakeThing(def: ThingDefOf.Silver);
                     silver.stackCount = RansomSettings.MarketValuePercentage(this.prisoner, this.percentage);
                     TradeUtility.SpawnDropPod(dropSpot: DropCellFinder.TradeDropSpot(map: this.prisoner.Map), map: this.prisoner.Map, t: silver);
@@ -208,11 +208,11 @@ namespace PrisonerRansom
                     //TaleRecorder.RecordTale(TaleDefOf.SoldPrisoner, this.handler, this.prisoner);
                     //faction.TryAffectGoodwillWith(other: Faction.OfPlayer, RansomSettings.settings.ransomGoodwill);
 
-                    Find.WindowStack.Add(new Dialog_MessageBox("You send your prisoner back to his home"));
+                    Find.WindowStack.Add(new Dialog_MessageBox("RansomPrisonerSend".Translate()));
                 }
                 else
                 {
-                    Find.WindowStack.Add(new Dialog_MessageBox("The faction did not accept the ransom. They will try to free the prisoner."));
+                    Find.WindowStack.Add(new Dialog_MessageBox("RansomNotAccepted".Translate()));
                     //faction.TryAffectGoodwillWith(other: Faction.OfPlayer, goodwillChange: RansomSettings.settings.ransomGoodwillFail);
 
                     IncidentParms incidentParms = StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.ThreatBig, this.prisoner.Map);
@@ -225,7 +225,7 @@ namespace PrisonerRansom
                 this.Close();
             }
 
-            if(listingStandard.ButtonText("Cancel"))
+            if(listingStandard.ButtonText("Back".Translate()))
                 this.Close();
         }
     }
