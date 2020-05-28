@@ -77,9 +77,8 @@ namespace PrisonerRansom
                                            {
                                                curve  = curve,
                                                color  = Color.cyan,
-                                               label  = "LABEL",
-                                               labelY = "Prob"
-                                           };
+                                               valueFormat = "{0}%"
+            };
 
             SimpleCurveDrawer.DrawCurve(inRect.BottomPart(0.3f), drawInfo, new SimpleCurveDrawerStyle
                                                                         {
