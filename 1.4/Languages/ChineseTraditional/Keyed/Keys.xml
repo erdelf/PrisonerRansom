@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<LanguageData>
+
+  <SettingsRansomFactor>贖金數額因素:{0}\n決定一個囚犯的價值，屬性乘數</SettingsRansomFactor>
+  <SettingsRansomRaidDelay> 失敗後襲擊延遲: {0}</SettingsRansomRaidDelay>
+  <SettingsRansomFailCooldown>失敗後的冷卻時間: {0}</SettingsRansomFailCooldown>
+  <SettingsRansomAdjustment>調整機率: {0}\n決定要求贖金失敗的可能性</SettingsRansomAdjustment>
+
+  <DialogRansomDemand>索取囚犯贖金</DialogRansomDemand>
+  <DialogRansomNoPrisoners>沒有此派系的囚犯</DialogRansomNoPrisoners>
+  <DialogRansomPrisonerList>此派系的囚犯</DialogRansomPrisonerList>
+
+  <RansomBargain>與{1}談判{0}的贖金</RansomBargain>
+  <RansomDemandAmount>索取{0} {1}</RansomDemandAmount>
+  <RansomDemandChance>成功索取贖金的機率為{0}%</RansomDemandChance>
+  <RansomSendOffer>發送要求</RansomSendOffer>
+
+  <RansomFactionDeliveredMessage>這個派系交付了贖金。</RansomFactionDeliveredMessage>
+  <RansomPrisonerSend>你將囚犯賣回了對方所屬派系。</RansomPrisonerSend>
+  <RansomNotAccepted>這個派系拒絕贖金要求。他們將設法營救囚犯。</RansomNotAccepted>
+
+</LanguageData>
