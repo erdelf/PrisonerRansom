@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <SettingsRansomFactor>Коэффициент суммы выкупа: {0}\nЭто значение, на которое умножается рыночная стоимость пленника</SettingsRansomFactor>
+  <SettingsRansomRaidDelay>Задержка перед появлением рейда после неудачной сделки по выкупу пленника: {0}</SettingsRansomRaidDelay>
+  <SettingsRansomFailCooldown>Время восстановления после неудачной сделки: {0}</SettingsRansomFailCooldown>
+  <SettingsRansomAdjustment>Корректировка расчёта вероятности: {0}\nОпределяет вероятность успешного исхода торга</SettingsRansomAdjustment>
+
+  <DialogRansomDemand>Требовать выкуп за пленника</DialogRansomDemand>
+  <DialogRansomNoPrisoners>нет пленных из этой фракции</DialogRansomNoPrisoners>
+  <DialogRansomPrisonerList>У вас есть следующие пленники из этой фракции:</DialogRansomPrisonerList>
+
+  <RansomBargain>Торг за {0} с представителем фракции {1}</RansomBargain>
+  <RansomDemandAmount> Требовать {0} серебра</RansomDemandAmount>
+  <RansomDemandChance>Вероятность успешного исхода торга составляет {0}%</RansomDemandChance>
+  <RansomSendOffer>Отправить требование</RansomSendOffer>
+
+  <RansomFactionDeliveredMessage>Фракция передала выкуп за пленника.</RansomFactionDeliveredMessage>
+  <RansomPrisonerSend>Вы продали вашего пленника представителям его фракции.</RansomPrisonerSend>
+  <RansomNotAccepted>Фракция не приняла ваши требования о выкупе. Они попытаются освободить пленника.</RansomNotAccepted>
+
+</LanguageData>
