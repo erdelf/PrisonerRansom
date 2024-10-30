@@ -213,10 +213,8 @@ namespace PrisonerRansom
             listingStandard.Gap();
             if (listingStandard.ButtonText("RansomSendOffer".Translate()))
             {
-                linkingBack = true;
-                this.prisoner.Faction.TryOpenComms(this.handler);
-
-                Faction faction = this.prisoner.Faction;
+                Faction           faction = this.prisoner.Faction;
+                Dialog_MessageBox messageBox;
                 if (Rand.Value < ransomChance)
                 {
                     Messages.Message("RansomFactionDeliveredMessage".Translate(), MessageTypeDefOf.PositiveEvent);
@@ -233,11 +231,11 @@ namespace PrisonerRansom
                     //TaleRecorder.RecordTale(TaleDefOf.SoldPrisoner, this.handler, this.prisoner);
                     //faction.TryAffectGoodwillWith(other: Faction.OfPlayer, RansomSettings.settings.ransomGoodwill);
 
-                    Find.WindowStack.Add(new Dialog_MessageBox("RansomPrisonerSend".Translate()));
+                    messageBox = new Dialog_MessageBox("RansomPrisonerSend".Translate());
                 }
                 else
                 {
-                    Find.WindowStack.Add(new Dialog_MessageBox("RansomNotAccepted".Translate()));
+                    messageBox = new Dialog_MessageBox("RansomNotAccepted".Translate());
                     //faction.TryAffectGoodwillWith(other: Faction.OfPlayer, goodwillChange: RansomSettings.settings.ransomGoodwillFail);
 
                     IncidentParms incidentParms = StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.ThreatBig, this.prisoner.Map);
@@ -249,6 +247,9 @@ namespace PrisonerRansom
                                                        RansomSettings.settings.ransomRaidDelay);
                 }
 
+                linkingBack = true;
+                this.prisoner.Faction.TryOpenComms(this.handler);
+                Find.WindowStack.Add(messageBox);
                 this.Close();
             }
 
