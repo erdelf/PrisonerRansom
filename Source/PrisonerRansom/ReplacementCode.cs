@@ -10,6 +10,7 @@ namespace PrisonerRansom
     using System;
     using System.Globalization;
     using JetBrains.Annotations;
+    using Verse.Noise;
 
     public class RansomSettings : ModSettings
     {
@@ -127,7 +128,8 @@ namespace PrisonerRansom
                 if (Page_PrisonerRansom.linkingBack)
                 {
                     Page_PrisonerRansom.linkingBack = false;
-                    __result                        = ransomPrisoner.link;
+                    if (negotiator.Map.mapPawns.PrisonersOfColony.Any(p => p.Faction == faction && p.CarriedBy == null))
+                        __result = ransomPrisoner.link;
                 }
                 else
                 {
