@@ -124,7 +124,7 @@ namespace PrisonerRansom
 
         private static DiaOption RansomPrisoner(Faction faction, Pawn negotiator, Map map, DiaNode original)
         {
-            IEnumerable<Pawn> prisoners = map.mapPawns.PrisonersOfColony.Where(predicate: p => p.Faction == faction).ToArray();
+            IEnumerable<Pawn> prisoners = map.mapPawns.PrisonersOfColony.Where(predicate: p => p.Faction == faction && p.CarriedBy == null).ToArray();
             DiaOption dia = new DiaOption(text: "DialogRansomDemand".Translate());
             if (!prisoners.Any())
                 dia.Disable(newDisabledReason: "DialogRansomNoPrisoners".Translate());
