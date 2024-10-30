@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace PrisonerRansom
 {
+    using System;
     using System.Globalization;
     using JetBrains.Annotations;
 
@@ -118,13 +119,22 @@ namespace PrisonerRansom
         {
             if (faction.HostileTo(other: Faction.OfPlayer))
             {
-                __result.options.Insert(index: 0, item: RansomPrisoner(faction: faction, negotiator: negotiator, map: negotiator.Map, original: __result));
+                DiaOption ransomPrisoner = RansomPrisoner(faction, negotiator, negotiator.Map, __result);
+                if (Page_PrisonerRansom.linkingBack)
+                {
+                    Page_PrisonerRansom.linkingBack = false;
+                    __result                        = ransomPrisoner.link;
+            }
+                else
+                {
+                    __result.options.Insert(0, ransomPrisoner);
+        }
             }
         }
 
         private static DiaOption RansomPrisoner(Faction faction, Pawn negotiator, Map map, DiaNode original)
         {
-            IEnumerable<Pawn> prisoners = map.mapPawns.PrisonersOfColony.Where(predicate: p => p.Faction == faction && p.CarriedBy == null).ToArray();
+            IEnumerable<Pawn> prisoners = map.mapPawns.PrisonersOfColony.Where(p => p.Faction == faction && p.CarriedBy == null).ToArray();
             DiaOption dia = new DiaOption(text: "DialogRansomDemand".Translate());
             if (!prisoners.Any())
                 dia.Disable(newDisabledReason: "DialogRansomNoPrisoners".Translate());
@@ -150,6 +160,8 @@ namespace PrisonerRansom
 
     public class Page_PrisonerRansom : Page
     {
+        internal static bool linkingBack;
+
         private readonly Pawn prisoner;
         private readonly Pawn handler;
         private float percentage;
@@ -160,7 +172,7 @@ namespace PrisonerRansom
             this.handler = handler;
         }
 
-        public override Vector2 InitialSize => new Vector2(400, 250);
+        public override Vector2 InitialSize => new Vector2(400, 300);
 
         public override void PostOpen()
         {
@@ -188,10 +200,15 @@ namespace PrisonerRansom
             this.percentage = listingStandard.Slider(this.percentage, -50f, 50f);
             listingStandard.Gap();
             listingStandard.Label(label: $"RansomDemandChance".Translate(Mathf.RoundToInt(RansomSettings.RansomChance(this.prisoner, this.handler, this.percentage) * 100).ToString(CultureInfo.CurrentCulture)));
+            float ransomChance = RansomSettings.RansomChance(this.prisoner, this.handler, this.percentage);
+            listingStandard.Label($"RansomDemandChance".Translate(Mathf.RoundToInt(ransomChance * 100)
             if (listingStandard.ButtonText("RansomSendOffer".Translate()))
             {
+                linkingBack = true;
+                this.prisoner.Faction.TryOpenComms(this.handler);
+
                 Faction faction = this.prisoner.Faction;
-                if (Rand.Value < RansomSettings.RansomChance(this.prisoner, this.handler, this.percentage))
+                if (Rand.Value < ransomChance)
                 {
                     Messages.Message(text: "RansomFactionDeliveredMessage".Translate(), def: MessageTypeDefOf.PositiveEvent);
                     Thing silver = ThingMaker.MakeThing(def: ThingDefOf.Silver);
@@ -224,8 +241,14 @@ namespace PrisonerRansom
                 this.Close();
             }
 
-            if(listingStandard.ButtonText("Back".Translate()))
+            if (listingStandard.ButtonText("Back".Translate()))
+            {
+                linkingBack = true;
+                this.prisoner.Faction.TryOpenComms(this.handler);
                 this.Close();
+        }
+
+            listingStandard.End();
         }
     }
 }
