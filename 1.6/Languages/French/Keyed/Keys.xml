@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LanguageData>
+
+    <SettingsRansomFactor>Facteur du montant de la rançon : {0}\nDétermine le facteur par lequel la valeur d'un prisonnier est multipliée.</SettingsRansomFactor>
+    <SettingsRansomRaidDelay> Délai avant qu'un raid apparaisse en cas d'échec: {0}</SettingsRansomRaidDelay>
+    <SettingsRansomFailCooldown>Temps de recharge après un échec: {0}</SettingsRansomFailCooldown>
+    <SettingsRansomAdjustment>Ajustement pour le facteur chance : {0}\nDétermine la probabilité d'échec d'une rançon</SettingsRansomAdjustment>
+
+    <DialogRansomDemand>Rançonner le prisonnier</DialogRansomDemand>
+    <DialogRansomNoPrisoners>Aucun prisonnier de cette faction</DialogRansomNoPrisoners>
+    <DialogRansomPrisonerList>Vous avez ces prisonniers pour cette faction</DialogRansomPrisonerList>
+
+    <RansomBargain>Négocier pour {0} avec {1}</RansomBargain>
+    <RansomDemandAmount> Demander {0} {1}</RansomDemandAmount>
+    <RansomDemandChance>Une chance de {0}% de réussite pour cette demande</RansomDemandChance>
+    <RansomSendOffer>Envoyer l'offre</RansomSendOffer>
+
+    <RansomFactionDeliveredMessage>La faction vous a envoyé la rançon.</RansomFactionDeliveredMessage>
+    <RansomPrisonerSend>Vous avez revendu votre prisonnier à sa faction.</RansomPrisonerSend>
+    <RansomNotAccepted>La faction n'a pas accepté la rançon. Ils vont essayer de libérer le prisonnier.</RansomNotAccepted>
+
+</LanguageData>
